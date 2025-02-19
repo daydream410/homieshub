@@ -1,5 +1,3 @@
--- MainScript.lua
-
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local targetGameID = 2693023319  -- Ganti dengan ID game yang sesuai
@@ -39,28 +37,47 @@ if currentGameID == targetGameID then
         }
     })
 
-    -- Fungsi untuk Infinite Jump
-    require(game.ServerScriptService:WaitForChild("InfiniteJump"))(MainTab, MainSection)
+    -- Memuat dan mengeksekusi fungsi dari GitHub
+    -- Pastikan URL GitHub mengarah ke file raw (gunakan link raw GitHub)
+    
+    -- Infinite Jump
+    local infiniteJumpScript = game:HttpGet('https://raw.githubusercontent.com/daydream410/homieshub/main/InfiniteJump.lua')
+    local infiniteJump = loadstring(infiniteJumpScript)
+    infiniteJump(MainTab, MainSection)
 
-    -- Fungsi untuk Flashlight
-    require(game.ServerScriptService:WaitForChild("Flashlight"))(MainTab, MainSection)
+    -- Flashlight
+    local flashlightScript = game:HttpGet('https://raw.githubusercontent.com/daydream410/homieshub/main/Flashlight.lua')
+    local flashlight = loadstring(flashlightScript)
+    flashlight(MainTab, MainSection)
 
-    -- Fungsi untuk WalkSpeed
-    require(game.ServerScriptService:WaitForChild("WalkSpeed"))(MainTab, MainSection)
+    -- WalkSpeed
+    local walkSpeedScript = game:HttpGet('https://raw.githubusercontent.com/daydream410/homieshub/main/WalkSpeed.lua')
+    local walkSpeed = loadstring(walkSpeedScript)
+    walkSpeed(MainTab, MainSection)
 
-    -- Fungsi untuk JumpPower
-    require(game.ServerScriptService:WaitForChild("JumpPower"))(MainTab, MainSection)
+    -- JumpPower
+    local jumpPowerScript = game:HttpGet('https://raw.githubusercontent.com/daydream410/homieshub/main/JumpPower.lua')
+    local jumpPower = loadstring(jumpPowerScript)
+    jumpPower(MainTab, MainSection)
 
-    -- Fungsi untuk Gravity
-    require(game.ServerScriptService:WaitForChild("Gravity"))(MainTab, MainSection)
+    -- Gravity
+    local gravityScript = game:HttpGet('https://raw.githubusercontent.com/daydream410/homieshub/main/Gravity.lua')
+    local gravity = loadstring(gravityScript)
+    gravity(MainTab, MainSection)
 
     -- Other Section
     local OtherSection = MainTab:CreateSection("Other")
-    require(game.ServerScriptService:WaitForChild("FreezeCamera"))(MainTab, OtherSection)
+    
+    -- FreezeCamera
+    local freezeCameraScript = game:HttpGet('https://raw.githubusercontent.com/daydream410/homieshub/main/FreezeCamera.lua')
+    local freezeCamera = loadstring(freezeCameraScript)
+    freezeCamera(MainTab, OtherSection)
 
     -- Info Tab untuk fitur lainnya
     local InfoTab = Window:CreateTab("🤔", nil)
-    require(game.ServerScriptService:WaitForChild("InfoTab"))(InfoTab)
+    local infoTabScript = game:HttpGet('https://raw.githubusercontent.com/daydream410/homieshub/main/InfoTab.lua')
+    local infoTab = loadstring(infoTabScript)
+    infoTab(InfoTab)
 else
     -- Jika game ID tidak cocok, tampilkan notifikasi atau berhenti
     game.StarterGui:SetCore("SendNotification", {
