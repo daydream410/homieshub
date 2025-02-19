@@ -21,8 +21,8 @@ local Window = Rayfield:CreateWindow({
       Note = "Key In Discord Server",
       FileName = "HomiesHubKey1",
       SaveKey = false,
-      GrabKeyFromSite = false,
-      Key = {"homies"}
+      GrabKeyFromSite = true,
+      Key = {"https://pastebin.com/raw/5wrVW0LY"}
    }
 })
 
