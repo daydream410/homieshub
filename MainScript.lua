@@ -1,30 +1,43 @@
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local baseURL = "https://raw.githubusercontent.com/daydream410/homieshub/main/"
+local Players = game:GetService("Players")
+local plr = Players.LocalPlayer
+local ID = game.PlaceId
 
-local targetGameID = 2693023319  -- Ganti dengan ID game yang sesuai
+-- Fungsi untuk memilih skrip berdasarkan ID game
+function GetGameScript()
+    if ID == 2693023319 then  -- Ganti dengan ID game yang sesuai
+        return "HomiesHub.lua"
+    elseif ID == 10450270085 then
+        return "JujutsuInfinite.lua"
+    elseif ID == 16379688837 then
+        return "HaikyuLegends.lua"
+    -- Tambahkan kondisi ID game lainnya di sini
+    else
+        print("Game not supported")
+        return nil
+    end
+end
 
--- Mendapatkan ID game saat ini
-local currentGameID = game.PlaceId
+local gameScript = GetGameScript()
 
--- Mengecek apakah game ID cocok
-if currentGameID == targetGameID then
-    -- Skrip hanya akan dijalankan jika game ID cocok
+if gameScript then
+    -- Menampilkan notifikasi "Correct Game"
     game.StarterGui:SetCore("SendNotification", {
         Title = "Game Check",
         Text = "CORRECT GAME!",
         Duration = 5
     })
-    -- Menunggu 5 detik agar notifikasi "Game Check" muncul
     task.wait(5)
 
-    -- Memuat CreateWindow dari GitHub
-    local createWindowScript = game:HttpGet('https://raw.githubusercontent.com/daydream410/homieshub/main/CreateWindow.lua')
-    local CreateWindow = loadstring(createWindowScript)()
+    -- Memuat dan menjalankan skrip dari GitHub
+    local scriptURL = baseURL .. gameScript
+    local scriptContent = game:HttpGet(scriptURL)
+    loadstring(scriptContent)()
 
-    -- Main Tab
-    local MainTab = CreateWindow:CreateTab("🏠", nil)
-    local MainSection = MainTab:CreateSection("Main")
+    -- Misalnya, jika skrip ini memuat Rayfield
+    local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
-    -- Menampilkan notifikasi
+    -- Menampilkan notifikasi untuk Rayfield
     Rayfield:Notify({
         Title = "Homies Hub Script",
         Content = "By yugieooh",
@@ -38,44 +51,29 @@ if currentGameID == targetGameID then
         }
     })
 
-    -- Memuat dan mengeksekusi fungsi dari GitHub
-    -- Pastikan URL GitHub mengarah ke file raw (gunakan link raw GitHub)
-    
-    -- Infinite Jump
-    local infiniteJumpScript = game:HttpGet('https://raw.githubusercontent.com/daydream410/homieshub/main/InfiniteJump.lua')
-    local infiniteJump = loadstring(infiniteJumpScript)
-    infiniteJump(MainTab, MainSection)
+    -- Menambahkan skrip fitur lainnya (contohnya Infinite Jump, WalkSpeed, dll)
+    local function LoadFeature(url, section)
+        local featureScript = game:HttpGet(url)
+        local feature = loadstring(featureScript)
+        feature(section)
+    end
 
-    -- Flashlight
-    local flashlightScript = game:HttpGet('https://raw.githubusercontent.com/daydream410/homieshub/main/Flashlight.lua')
-    local flashlight = loadstring(flashlightScript)
-    flashlight(MainTab, MainSection)
+    -- Mengambil dan menjalankan skrip untuk berbagai fitur
+    local MainTab = Rayfield:CreateTab("🏠", nil)
+    local MainSection = MainTab:CreateSection("Main")
 
-    -- WalkSpeed
-    local walkSpeedScript = game:HttpGet('https://raw.githubusercontent.com/daydream410/homieshub/main/WalkSpeed.lua')
-    local walkSpeed = loadstring(walkSpeedScript)
-    walkSpeed(MainTab, MainSection)
+    LoadFeature('https://raw.githubusercontent.com/daydream410/homieshub/main/InfiniteJump.lua', MainSection)
+    LoadFeature('https://raw.githubusercontent.com/daydream410/homieshub/main/Flashlight.lua', MainSection)
+    LoadFeature('https://raw.githubusercontent.com/daydream410/homieshub/main/WalkSpeed.lua', MainSection)
+    LoadFeature('https://raw.githubusercontent.com/daydream410/homieshub/main/JumpPower.lua', MainSection)
+    LoadFeature('https://raw.githubusercontent.com/daydream410/homieshub/main/Gravity.lua', MainSection)
 
-    -- JumpPower
-    local jumpPowerScript = game:HttpGet('https://raw.githubusercontent.com/daydream410/homieshub/main/JumpPower.lua')
-    local jumpPower = loadstring(jumpPowerScript)
-    jumpPower(MainTab, MainSection)
-
-    -- Gravity
-    local gravityScript = game:HttpGet('https://raw.githubusercontent.com/daydream410/homieshub/main/Gravity.lua')
-    local gravity = loadstring(gravityScript)
-    gravity(MainTab, MainSection)
-
-    -- Other Section
+    -- Tambahkan section lain jika perlu
     local OtherSection = MainTab:CreateSection("Other")
-    
-    -- FreezeCamera
-    local freezeCameraScript = game:HttpGet('https://raw.githubusercontent.com/daydream410/homieshub/main/FreezeCamera.lua')
-    local freezeCamera = loadstring(freezeCameraScript)
-    freezeCamera(MainTab, OtherSection)
+    LoadFeature('https://raw.githubusercontent.com/daydream410/homieshub/main/FreezeCamera.lua', OtherSection)
 
     -- Info Tab untuk fitur lainnya
-    local InfoTab = CreateWindow:CreateTab("🤔", nil)
+    local InfoTab = Rayfield:CreateTab("🤔", nil)
     local infoTabScript = game:HttpGet('https://raw.githubusercontent.com/daydream410/homieshub/main/InfoTab.lua')
     local infoTab = loadstring(infoTabScript)
     infoTab(InfoTab)
@@ -88,3 +86,49 @@ else
     })
     return  -- Menyudahi skrip jika game ID tidak cocok
 end
+
+-- Menghentikan efek Blur jika ada
+spawn(function()
+    while wait(1) do
+        pcall(function()
+            for _, v in pairs(game:GetService("Lighting"):GetChildren()) do
+                if v.Name == "Blur" then
+                    v:Destroy()
+                end
+            end
+        end)
+    end
+end)
+
+-- Menonaktifkan idling
+for _, v in next, getconnections(plr.Idled) do
+    v:Disable()
+end
+
+-- Mencegah status AFK
+local VirtualUser = game:GetService("VirtualUser")
+local status = getgenv().afk_toggle
+if status == nil then
+    getgenv().afk_toggle = false
+end
+
+if not plr then
+    error("Failed to get LocalPlayer reference")
+end
+
+plr.Idled:Connect(function()
+    if not getgenv().afk_toggle then return end
+    pcall(function()
+        VirtualUser:CaptureController()
+        VirtualUser:ClickButton2(Vector2.new())
+    end)
+end)
+
+-- Mengatur FPS cap
+spawn(function()
+    while wait(0.1) do
+        pcall(function()
+            setfpscap(1000)
+        end)
+    end
+end)
