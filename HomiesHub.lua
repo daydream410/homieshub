@@ -1,22 +1,6 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
-local targetGameID = 2693023319  -- Ganti dengan ID game yang sesuai
-
--- Mendapatkan ID game saat ini
-local currentGameID = game.PlaceId
-
--- Mengecek apakah game ID cocok
-if currentGameID == targetGameID then
-    -- Skrip hanya akan dijalankan jika game ID cocok
-    game.StarterGui:SetCore("SendNotification", {
-        Title = "Game Check",
-        Text = "CORRECT GAME!",
-        Duration = 5
-    })
-    -- Menunggu 5 detik agar notifikasi "Game Check" muncul
-    task.wait(5)
-
-   local Window = Rayfield:CreateWindow({
+local Window = Rayfield:CreateWindow({
    Name = "Homies Hub",
    LoadingTitle = "Apa kek udah gede",
    LoadingSubtitle = "by yugieooh",
@@ -38,9 +22,7 @@ if currentGameID == targetGameID then
       FileName = "HomiesHubKey1",
       SaveKey = false,
       GrabKeyFromSite = false,
-    --   GrabKeyFromSite = true,
       Key = {"homies"}
-    --   Key = {"https://pastebin.com/raw/AtgzSPWK"}
    }
 })
 
@@ -267,20 +249,12 @@ local FreezeCameraToggle = MainTab:CreateToggle({
                     Duration = 5
                 })
             else
-                -- Mengembalikan pengaturan kamera ke default
-                camera.CameraType = Enum.CameraType.Custom
-                camera.FieldOfView = 70  -- Reset FOV ke nilai semula
-
-                -- Notifikasi untuk pemain
-                game.StarterGui:SetCore("SendNotification", {
-                    Title = "UnFreeze Camera",
-                    Text = "Camera movement is free.",
-                    Duration = 5
-                })
+                -- Mengembalikan kamera ke pengaturan default
+                camera.CameraType = Enum.CameraType.Custom  -- Mengaktifkan kembali pergerakan otomatis kamera
             end
         end
 
-        -- Terapkan freeze camera berdasarkan nilai toggle
+        -- Mengaktifkan atau menonaktifkan freeze camera
         setFreezeCamera(Value)
     end,
 })
@@ -295,13 +269,3 @@ local versionLabel = InfoTab:CreateLabel("Version: 1.0")  -- Ganti 1.0 dengan ve
 -- Atur posisi atau layout jika perlu
 infoLabel.Position = UDim2.new(0, 0, 0, 20)  -- Sesuaikan posisi label pertama
 versionLabel.Position = UDim2.new(0, 0, 0, 40)  -- Sesuaikan posisi label kedua
-
-else
-    -- Jika game ID tidak cocok, tampilkan notifikasi atau berhenti
-    game.StarterGui:SetCore("SendNotification", {
-        Title = "Game Check",
-        Text = "WRONG GAME!",
-        Duration = 5
-    })
-    return  -- Menyudahi skrip jika game ID tidak cocok
-end
