@@ -1,12 +1,10 @@
 local baseURL = "https://raw.githubusercontent.com/daydream410/homieshub/main/"
-local Players = game:GetService("Players")
-local plr = Players.LocalPlayer
 local ID = game.PlaceId
 
 -- Fungsi untuk memilih skrip berdasarkan ID game
 function GetGameScript()
     if ID == 2693023319 then  -- Ganti dengan ID game yang sesuai
-        return "HomiesHub.lua"
+        return "EA.lua"
     else
         -- print("Game not supported")
         return nil
