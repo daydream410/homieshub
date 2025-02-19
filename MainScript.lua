@@ -16,11 +16,12 @@ if currentGameID == targetGameID then
     -- Menunggu 5 detik agar notifikasi "Game Check" muncul
     task.wait(5)
 
-    -- Memanggil fungsi untuk membuat Window
-    local Window = require(game.ServerScriptService:WaitForChild("CreateWindow"))()
+    -- Memuat CreateWindow dari GitHub
+    local createWindowScript = game:HttpGet('https://raw.githubusercontent.com/daydream410/homieshub/main/CreateWindow.lua')
+    local CreateWindow = loadstring(createWindowScript)()
 
     -- Main Tab
-    local MainTab = Window:CreateTab("🏠", nil)
+    local MainTab = CreateWindow:CreateTab("🏠", nil)
     local MainSection = MainTab:CreateSection("Main")
 
     -- Menampilkan notifikasi
@@ -74,7 +75,7 @@ if currentGameID == targetGameID then
     freezeCamera(MainTab, OtherSection)
 
     -- Info Tab untuk fitur lainnya
-    local InfoTab = Window:CreateTab("🤔", nil)
+    local InfoTab = CreateWindow:CreateTab("🤔", nil)
     local infoTabScript = game:HttpGet('https://raw.githubusercontent.com/daydream410/homieshub/main/InfoTab.lua')
     local infoTab = loadstring(infoTabScript)
     infoTab(InfoTab)
