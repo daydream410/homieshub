@@ -341,6 +341,14 @@ local highlightToggle = MainTab:CreateToggle({
             
             -- Menambahkan highlight untuk pemain yang bergabung setelah toggle diaktifkan
             players.PlayerAdded:Connect(addHighlight)
+
+            -- Looping setiap 5 detik untuk menambahkan highlight
+            while Value do
+                for _, player in pairs(players:GetPlayers()) do
+                    addHighlight(player)
+                end
+                wait(3)  -- Tunggu 5 detik sebelum menjalankan ulang
+            end
         else
             game.StarterGui:SetCore("SendNotification", {
                 Title = "Homies Hub",
