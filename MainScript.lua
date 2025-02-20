@@ -25,8 +25,15 @@ if gameScript then
     -- Memuat dan menjalankan skrip dari GitHub
     local HttpService = game:GetService("HttpService")
     local scriptURL = baseURL .. gameScript
-    local scriptContent = HttpService:GetAsync(scriptURL)  -- Menggunakan GetAsync untuk mengambil skrip
-    loadstring(scriptContent)()
+    local scriptContent = HttpService:GetAsync(scriptURL)
+
+    -- Membuat ModuleScript untuk mengeksekusi kode yang diambil
+    local moduleScript = Instance.new("ModuleScript")
+    moduleScript.Source = scriptContent  -- Menyisipkan kode dari URL
+    moduleScript.Parent = game.ServerScriptService  -- Menempatkannya dalam ServerScriptService
+
+    -- Mengaktifkan ModuleScript
+    local module = require(moduleScript)
 else
     -- Jika game ID tidak cocok, tampilkan notifikasi atau berhenti
     local StarterGui = game:GetService("StarterGui")
