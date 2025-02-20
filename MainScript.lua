@@ -24,7 +24,8 @@ if gameScript then
 
     -- Memuat dan menjalankan skrip dari GitHub
     local scriptURL = baseURL .. gameScript
-    local scriptContent = game:HttpGet(scriptURL)
+    local HttpService = game:GetService("HttpService")
+    local scriptContent = HttpService:GetAsync(scriptURL)  -- Menggunakan GetAsync untuk mengambil skrip
     loadstring(scriptContent)()
 else
     -- Jika game ID tidak cocok, tampilkan notifikasi atau berhenti
