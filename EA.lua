@@ -266,7 +266,7 @@ local highlightToggle = MainTab:CreateToggle({
     Flag = "highlightFlag",
     Callback = function(Value)
         local players = game:GetService("Players")
-        
+
         -- Fungsi untuk menambahkan highlight
         local function addHighlight(player)
             if player ~= players.LocalPlayer and player.Character then -- Hindari menyorot diri sendiri
@@ -326,29 +326,23 @@ local highlightToggle = MainTab:CreateToggle({
                 end
             end
         end
-        
+
+        -- Callback ketika toggle diaktifkan
         if Value then
             game.StarterGui:SetCore("SendNotification", {
                 Title = "Homies Hub",
                 Text = "Player Highlight Activated!",
                 Duration = 5
             })
-            
+
             -- Menambahkan highlight ke semua pemain saat ini
             for _, player in pairs(players:GetPlayers()) do
                 addHighlight(player)
             end
-            
+
             -- Menambahkan highlight untuk pemain yang bergabung setelah toggle diaktifkan
             players.PlayerAdded:Connect(addHighlight)
 
-            -- Looping setiap 5 detik untuk menambahkan highlight
-            while Value do
-                for _, player in pairs(players:GetPlayers()) do
-                    addHighlight(player)
-                end
-                wait(3)  -- Tunggu 5 detik sebelum menjalankan ulang
-            end
         else
             game.StarterGui:SetCore("SendNotification", {
                 Title = "Homies Hub",
