@@ -1,370 +1,32 @@
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield', true))()
-
-local Window = Rayfield:CreateWindow({
-   Name = "Homies Hub",
-   LoadingTitle = "Apa kek udah gede",
-   LoadingSubtitle = "by yugieooh",
-   ConfigurationSaving = {
-      Enabled = true,
-      FolderName = "homies",
-      FileName = "Homies Hub"
-   },
-    Discord = {
-      Enabled = true, -- Prompt the user to join your Discord server if their executor supports it
-      Invite = "WMNPSwKgQ8", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
-      RememberJoins = false -- Set this to false to make them join the discord every time they load it up
-   },
-   KeySystem = true,
-   KeySettings = {
-      Title = "Key | Homies Hub",
-      Subtitle = "Key System",
-      Note = "Key In Discord Server",
-      FileName = "HomiesHubKey1",
-      SaveKey = false,
-      GrabKeyFromSite = true,
-      Key = {"https://pastebin.com/raw/5wrVW0LY"}
-   }
-})
-
-local MainTab = Window:CreateTab("🏠", nil)
-local MainSection = MainTab:CreateSection("Main")
-
-Rayfield:Notify({
-   Title = "Homies Hub Script",
-   Content = "By yugieooh",
-   Duration = 5,
-   Image = 13047715178,
-   Actions = {
-      Ignore = {
-         Name = "Okay!",
-         Callback = function()
-         end
-      }
-   },
-})
-
--- Infinite Jump Toggle
-local infiniteJumpToggle = MainTab:CreateToggle({
-   Name = "Infinite Jump (Fall Damage)",
-   CurrentValue = false,
-   Flag = "InfJumpFlag",
-   Callback = function(Value)
-       -- Mengatur _G.infinjump berdasarkan nilai Value dari toggle
-       _G.infinjump = Value
-
-       -- Fungsi untuk mengatur Infinite Jump pada karakter pemain
-       local function setupInfiniteJump(character)
-           local humanoid = character:WaitForChild("Humanoid")
-           local UserInputService = game:GetService('UserInputService')
-
-           -- Menghubungkan event untuk mendeteksi ketika pemain menekan tombol space
-           UserInputService.InputBegan:Connect(function(input, gameProcessed)
-               -- Memastikan input bukan untuk UI atau lainnya
-               if not gameProcessed and input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == Enum.KeyCode.Space then
-                   if _G.infinjump then
-                       -- Mengaktifkan Infinite Jump
-                       humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-                       task.wait(0.1) -- Menunggu sedikit sebelum kembali ke kondisi duduk
-                       humanoid:ChangeState(Enum.HumanoidStateType.Seated)
-                   end
-               end
-           end)
-       end
-
-       -- Menunggu karakter pemain siap atau direspawn
-       local plr = game:GetService('Players').LocalPlayer
-       local character = plr.Character or plr.CharacterAdded:Wait()
-       setupInfiniteJump(character)
-
-       -- Menunggu respawn dan mengatur ulang Infinite Jump
-       plr.CharacterAdded:Connect(function(newCharacter)
-           setupInfiniteJump(newCharacter)
-       end)
-
-       -- Mengirim notifikasi saat Infinite Jump diaktifkan atau dimatikan
-       if Value then
-           game.StarterGui:SetCore("SendNotification", {
-               Title = "Homies Hub",
-               Text = "Infinite Jump Activated!",
-               Duration = 5
-           })
-           Rayfield:Notify({
-            Title = "WARNING",
-            Content = "Fall Damage still affected if u using Infinite Jump!",
-            Duration = 10,
-            Image = "message-square-warning",
-            })
-       else
-           game.StarterGui:SetCore("SendNotification", {
-               Title = "Homies Hub",
-               Text = "Infinite Jump Deactivated!",
-               Duration = 5
-           })
-       end
-   end,
-})
-
--- Flashlight Toggle
-local flashlightToggle = MainTab:CreateToggle({
-   Name = "Flashlight",
-   CurrentValue = false,
-   Flag = "FlashlightFlag",
-   Callback = function(Value)
-       local player = game.Players.LocalPlayer
-       local character = player.Character or player.CharacterAdded:Wait()
-
-       -- Pastikan HumanoidRootPart ada sebelum melanjutkan
-       local humanoidRootPart = character:WaitForChild("HumanoidRootPart", 5)  -- Menunggu selama 5 detik
-
-       -- Jika HumanoidRootPart tidak ditemukan, hentikan eksekusi
-       if not humanoidRootPart then
-           game.StarterGui:SetCore("SendNotification", {
-               Title = "Error",
-               Text = "HumanoidRootPart not found!",
-               Duration = 5
-           })
-           return
-       end
-
-       -- Fungsi untuk menambah Spotlight
-       local function addSpotLightAroundPlayer()
-           -- Membuat SpotLight
-           local light = Instance.new("SpotLight")
-           light.Parent = humanoidRootPart  -- Lampu ditempatkan di HumanoidRootPart
-           light.Range = 30  -- Jarak cahaya
-           light.Brightness = 7  -- Kecerahan cahaya
-           light.Color = Color3.fromRGB(255, 255, 255)  -- Warna cahaya putih
-           light.Enabled = true  -- Lampu menyala
-           light.Angle = 45  -- Sudut cahaya yang lebih terfokus
-           light.Direction = humanoidRootPart.CFrame.LookVector  -- Arah cahaya mengikuti arah pandang karakter
-
-           -- Menambahkan sedikit offset untuk posisi lampu
-           local offset = Instance.new("Attachment")
-           offset.Parent = humanoidRootPart
-           offset.Position = Vector3.new(0, 3, 0)  -- Menempatkan sedikit di atas karakter
-           light.Attachment0 = offset
-       end
-
-       -- Notifikasi saat toggle diaktifkan atau dinonaktifkan
-       if Value then
-           game.StarterGui:SetCore("SendNotification", {
-               Title = "Homies Hub",
-               Text = "Flashlight Activated!",
-               Duration = 5
-           })
-
-           -- Menambahkan lampu saat toggle dinyalakan
-           addSpotLightAroundPlayer()
-       else
-           game.StarterGui:SetCore("SendNotification", {
-               Title = "Homies Hub",
-               Text = "Flashlight Deactivated!",
-               Duration = 5
-           })
-
-           -- Menghentikan Spotlight saat toggle dimatikan
-           local existingLight = humanoidRootPart:FindFirstChildOfClass("SpotLight")
-           if existingLight then
-               existingLight.Enabled = false  -- Mematikan lampu
-               existingLight:Destroy()  -- Menghapus lampu dari permainan
-           end
-       end
-   end,
-})
-
--- WalkSpeed Slider
-local Slider = MainTab:CreateSlider({
-   Name = "WalkSpeed",
-   Range = {1, 350},
-   Increment = 1,
-   Suffix = "Speed",
-   CurrentValue = 16,
-   Flag = "sliderws",
-   Callback = function(Value)
-        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = (Value)
-   end,
-})
-
--- JumpPower Slider
-local Slider = MainTab:CreateSlider({
-   Name = "JumpPower (No Fall Damage)",
-   Range = {1, 350},
-   Increment = 1,
-   Suffix = "Power",
-   CurrentValue = 16,
-   Flag = "sliderjp",
-   Callback = function(Value)
-        game.Players.LocalPlayer.Character.Humanoid.JumpPower = (Value)
-   end,
-})
-
--- Gravity Slider
-local Slider = MainTab:CreateSlider({
-   Name = "Gravity (No Fall Damage)",
-   Range = {1, 500},
-   Increment = 1,
-   Suffix = "Gravity",
-   CurrentValue = game.Workspace.Gravity,
-   Flag = "slidergravity",
-   Callback = function(Value)
-        game.Workspace.Gravity = Value
-   end,
-})
-
--- Other Section untuk fitur lainnya
-local OtherSection = MainTab:CreateSection("Other")
-
-local FreezeCameraToggle = MainTab:CreateToggle({
-    Name = "Freeze Camera",
-    CurrentValue = false,
-    Flag = "FreezeCameraFlag",
-    Callback = function(Value)
-        local player = game.Players.LocalPlayer
-        local camera = game.Workspace.CurrentCamera
-
-        -- Fungsi untuk membekukan gerakan kamera (freeze camera)
-        local function setFreezeCamera(enable)
-            if enable then
-                -- Membuat kamera tidak bergerak atau berputar secara otomatis
-                camera.FieldOfView = 70  -- Mengatur FOV ke nilai standar
-                camera.CameraType = Enum.CameraType.Scriptable  -- Menonaktifkan pergerakan otomatis kamera
-                camera.CFrame = camera.CFrame  -- Menjaga posisi dan rotasi tetap stabil
-
-                -- Loop untuk menjaga agar kamera tetap stabil pada posisi dan orientasi yang sama
-                local function updateCamera()
-                    while enable do
-                        -- Menjaga CFrame agar tetap sama, memastikan kamera tidak bergerak
-                        camera.CFrame = camera.CFrame
-                        wait(0.1)  -- Memperbarui posisi kamera setiap 0.1 detik
-                    end
-                end
-
-                -- Mulai loop untuk memastikan kamera tetap stabil
-                coroutine.wrap(updateCamera)()
-                
-                -- Notifikasi untuk pemain
-                game.StarterGui:SetCore("SendNotification", {
-                    Title = "Freeze Camera",
-                    Text = "Camera movement is interrupted.",
-                    Duration = 5
-                })
-            else
-                -- Mengembalikan kamera ke pengaturan default
-                camera.CameraType = Enum.CameraType.Custom  -- Mengaktifkan kembali pergerakan otomatis kamera
-            end
-        end
-
-        -- Mengaktifkan atau menonaktifkan freeze camera
-        setFreezeCamera(Value)
-    end,
-})
-
--- highlight Toggle untuk Highlight Semua Player
-local highlightToggle = MainTab:CreateToggle({
-    Name = "Highlight All Player",
-    CurrentValue = false,
-    Flag = "highlightFlag",
-    Callback = function(Value)
-        local players = game:GetService("Players")
-
-        -- Fungsi untuk menambahkan highlight
-        local function addHighlight(player)
-            if player ~= players.LocalPlayer and player.Character then -- Hindari menyorot diri sendiri
-                -- Periksa apakah player memiliki HumanoidRootPart dan Head
-                local character = player.Character
-                if character and character:FindFirstChild("HumanoidRootPart") and character:FindFirstChild("Head") then
-                    -- Menambahkan highlight jika belum ada
-                    local existingHighlight = character:FindFirstChildOfClass("Highlight")
-                    if not existingHighlight then
-                        local highlight = Instance.new("Highlight")
-                        highlight.Parent = character
-                        highlight.FillColor = Color3.fromRGB(255, 255, 0) -- Warna kuning
-                        highlight.OutlineColor = Color3.fromRGB(255, 255, 255) -- Warna putih
-                        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                        highlight.FillTransparency = 0.5 -- Transparansi isi
-                        highlight.OutlineTransparency = 0 -- Transparansi outline
-                    end
-
-                    -- Menambahkan nama pemain (tanpa pengecekan jarak)
-                    local nameLabel = character:FindFirstChildOfClass("BillboardGui")
-
-                    if not nameLabel then
-                        -- Menambahkan label nama jika belum ada
-                        nameLabel = Instance.new("BillboardGui")
-                        nameLabel.Adornee = character.Head
-                        nameLabel.Size = UDim2.new(0, 100, 0, 30)
-                        nameLabel.StudsOffset = Vector3.new(0, 3, 0)
-                        nameLabel.AlwaysOnTop = true
-
-                        local textLabel = Instance.new("TextLabel")
-                        textLabel.Parent = nameLabel
-                        textLabel.Size = UDim2.new(1, 0, 1, 0)
-                        textLabel.BackgroundTransparency = 1
-                        textLabel.Text = player.Name
-                        textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-                        textLabel.TextStrokeTransparency = 0.5
-                        textLabel.TextSize = 14
-
-                        nameLabel.Parent = character
-                    end
-                end
-            end
-        end
-        
-        -- Fungsi untuk menghapus highlight
-        local function removeHighlight(player)
-            if player.Character then
-                local existingHighlight = player.Character:FindFirstChildOfClass("Highlight")
-                if existingHighlight then
-                    existingHighlight:Destroy()
-                end
-
-                -- Menghapus label nama
-                local nameLabel = player.Character:FindFirstChildOfClass("BillboardGui")
-                if nameLabel then
-                    nameLabel:Destroy()
-                end
-            end
-        end
-
-        -- Callback ketika toggle diaktifkan
-        if Value then
-            game.StarterGui:SetCore("SendNotification", {
-                Title = "Homies Hub",
-                Text = "Player Highlight Activated!",
-                Duration = 5
-            })
-
-            -- Menambahkan highlight ke semua pemain saat ini
-            for _, player in pairs(players:GetPlayers()) do
-                addHighlight(player)
-            end
-
-            -- Menambahkan highlight untuk pemain yang bergabung setelah toggle diaktifkan
-            players.PlayerAdded:Connect(addHighlight)
-
-        else
-            game.StarterGui:SetCore("SendNotification", {
-                Title = "Homies Hub",
-                Text = "Player Highlight Deactivated!",
-                Duration = 5
-            })
-            
-            -- Menghapus highlight dari semua pemain saat toggle dimatikan
-            for _, player in pairs(players:GetPlayers()) do
-                removeHighlight(player)
-            end
-        end
-    end,
-})
-
--- Info Tab untuk fitur lainnya
-local InfoTab = Window:CreateTab("🤔", nil)
-
--- Menambahkan label untuk menampilkan informasi pembuat dan versi
-local infoLabel = InfoTab:CreateLabel("Homies Hub by yugieooh")  -- Ganti [Your Name] dengan nama pembuat
-local versionLabel = InfoTab:CreateLabel("Version: 1.0")  -- Ganti 1.0 dengan versi saat ini
-
--- Atur posisi atau layout jika perlu
-infoLabel.Position = UDim2.new(0, 0, 0, 20)  -- Sesuaikan posisi label pertama
-versionLabel.Position = UDim2.new(0, 0, 0, 40)  -- Sesuaikan posisi label kedua
+~'vZvkx jgFzm?ȫ&z{]hvk'zWByhv
+jgh{.x^zKjuiا++eyBwڶ*'I'i^vxZ%ujghXx֦xz&+tInWjm:"*.8rݱz^rh˩+Hyc
+=,
+>8^+byy'اr[yجr݂āجr݂ ]m4^zh{j[䞶bj[azh{ayجrzئz^Zv+nK+-zkk')8z&nح,鍢׊{"'+RzެXx֦xz&TiZ(zxij^n)ܢokµVж%ƥ1M֊wh*jדiZjStrبƢ6
+rبƢ~'t-^zm'+B{^r"z!ڶ*'䉚wӎם{-"	Zk VrGbww׉jS%zZjX~)n	^1M­y: Wjg׉jEjYCjfx+Unyej'|YZ&rبV1j۫h~)j[zZjy╨j[uⶈ Ɗw;V+&zxȝ׉jii֤jzfZjWb{H׉j\r׫jz"uZ-zh(bhqTȞIǠjgzԞyKԞ{zx!FzI׭zK"b^ޑfZq,z'Rzq'Az
+y_w-➛>zwzf))ۤPjZyj'ǬZاTȞO*^{Rǫ"zn<xnu݊zn
+^{)삡גƊw;^zx؟ȝ׉jaf'By+Z'aԭjדʗjbZL5v)"Ǜz[jXzJ'v+"vnjz"t(Z^{隞J֭y<y'^קuzw~ǧx FjK^j)쉪Z'kRzqk'jSk'Z-ze(Z-z+Zr׫^ufǭ'~)n!jǧx 'uzx"w+^&驦Zr׫^t*'-~ܶ*'r׫nߊxxw
+i^i'⑫""w+^&v&'jvjbb}Vazxj^kIBzwM؟ƭӊ^zm7ߊxx-yb~Qk'zWM؟8D
+*'e
+-YZ}b~묊x׉jCЉ鞲Ơ{*)z[J֫ƺ$*+y't-jب8'{H׉jCy-yb~^קw!(!: Wƥ~VX	^1M­y: Wjg!(!+UnyejejemV	em$~ܶ*'UnzZjZek'>Vzƥ>Vzhq\r׫Vzj讙Zr׫^ufjbǺf'QOjZumngjxFjz"u(Z-zh(bhڮ~ǧx ǥjfubFf'QOjm֤v+^),zK'nhڮazxj^kIBzwM؟ƭӊ^7{jz"u(z-~t;jب޶zw~[ȮۤڙJ-(!ZjWbvu*h+>Vz1雹RKmX'֧q*hbOjjz"u(jjnv+^݈{jz"u(XZjqZɩbA(!w)Zơk&m
+h*%߮ny۞~fbX'i^v{jjnjVmx%{~+ɩ׫~.X-f'QOjBx(W
+څơk&zx"bjjx$jǧjfچFb+h}Jh+"ZjZ~ǭ"{-jw�֜g߱Ojjz"u(߱OȭyhyMjǝHv&j-zb@֜gJ~ǭzw~-jȬim%yؚ؟ڵz'jKb~FZ筅jgz'
+I6b~'*'N+exz&ejemb^t;jب1ڙjjn b&jFiRKm.k'z[J֫ƺ$*+y't-jب8'{E!(!7rدjםڶ*'zx!z{bҦem bbƥ{).(!jz"u(XtXСWN|)Zĩb}bاazwbDyږǾǦjؤjyZ+-xm
+-ǧZjzvzw^קwjYJXzhqR'^Ƣ6
+䥉׫5YdJuwB'rz{uJߋyBޞZYZbu&rبVk'jSk'
+i^{jz"uf*^yZ瞝߾&>)buƥJXztl*jג'^֦x0zhe
+Zߝޙ+~,O
+z{Uj[סej%׫VrGbuZjgqO(Z-znj[zw~jھ+rJXzhqR'^Ƣ6
+䥉׫5܍V6jjxם4"w+zgT}܂ޞZjg,܅,'^
+ھ+r	em$~ܶ*'Unzyj+ZqjVwI-ۤ~+nV|azrبƢ6
+rبazhqEx&z%xƢ6
+	^5
+z{Uj[}lxYZZ{7jghYZ&rبVhqixZ.Zƥq娮K)iǂޞКn"{ngm.zjy~ږrبǭzvzvaz1雹djgj؝jFޮjFjޮjqڢ&jجqbzWN}Xý>ǧnS╨j	'`O*^I֛1蝩-ڑ趉+$jgiƦzyƦz{zxځh+"u֬׭j-i袛&zxځjڵZZn)ii֩Ȭ֧֬&ƦjZjWb{u^	!Wy>ǧZڙj^ljfzf)Fz֤mzqq_1zڮ詢ȬFzzؚM]zؤzw^߾2ZZ(I-F^l+b+ju^	6b~)+)zfy+Z׫zШ䞝h'qbtWx&z{Bjgjj/zg+"׫myb~^ǾǧjXjyڑ^uں[\jgh&zʗjgi<x+ǧ-Gmbzjz-fzw^߾1jKb~Fj֮蝩-{7jgjǭUnybbS%zAbRzk>VzhqaemN tl*jד%x֦xxX%ZºޞZj[V(!(!YZ&rبVhqi឵''>Vz>[Ȯۤڙemrب](!(!Z~Z镬qOݦVzjxu-v*݊Kjjek'颖)"隞F-=uyeƥri^Zr׫!jڝ!jŊwE-
+t{jz"u(ri^XtXСWGymǧjfچF(!(!8ifjZjWbb\r׫)*(bӟ
+VxX؟^+-xemX'֧qxXbbOjZ-zbbEYBZ+
+hwdFny۞t嚮vxXӮXx*%~&D`v睹ny嚮vء(!(!7(u'abCza2^\çNaem)eNzw2ӟNj{"ȡem:ew쥪ޝ̴j{)j*.Xyjvjj)jzZyǤjxڭ%ƥ-ޕZ-zbbB)]9jY[~z--ޖ^zvmdjyZmgjfFz[i֧jgi"{-jwY[jgi+眅r׫杝-ޕ(y@iMtM-ޕ+nvß~ǭU-{
+7vxzP%:tzZj[^mHZǧ{mm{Ki=ޞڙmm{KiJ,P8wMtm-ޔ
+wS쥪ޝ̵m-ޕ7Zjg{KiMm
+hp~&D`v睹nym-ޕ7+kG쥪ޝ̴ױzTԢx-ޔz{\r׫zw^קun"{ngbbeƥ~ܶ*'騽bi'镬(Z-zazyhq^+-xemVzjŊwE-
+t,(!(!'+-xem{)(!(!72zw~ǧZmgjfƥ-ޖZr׫)*(bӟ
+VѮ'jgi-ޔ72zw^קwjY[i$zؤj W-'j[J֫ƺ$*+y't-jب8'{OxX+ڵCjXjj)ib'ek'zZ)ZvtxXek'zw~ǧjfچF(!(!J^ɩmiǭzV bjKb~FVz]yШw](!(!lzy+Z׫zШ䞝h'qbtWh{Mm>VzbCy-yb~~ǧbb]jzk隊{jh	^v))+Z➖ek'g>VzemVzuzw~ߡ6{nZyjZjR'~mhvy6)~ǧjfچFޖIY)ߢ*^֧ZjX~mHiy^-ޔz&"z!᚞ؘjgzxvjn歖*'-ޔߡ6
+mUz"}t᚞صקz"xn,Țk*.8j~mOȭ)4M䞲梑ȬVzZ^֦j*'-ޔ,ب@iM4OI.j),ȥin
