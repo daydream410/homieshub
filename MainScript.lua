@@ -4,7 +4,7 @@ local ID = game.PlaceId
 -- Fungsi untuk memilih skrip berdasarkan ID game
 function GetGameScript()
     if ID == 2693023319 then  -- Ganti dengan ID game yang sesuai
-        return "EA.lua"
+        return "EAenc.lua"
     else
         -- print("Game not supported")
         return nil
