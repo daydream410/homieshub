@@ -1,4 +1,4 @@
-local baseURL = "https://raw.githubusercontent.com/daydream410/homieshub/main/"
+local baseURL = "https://raw.githubusercontent.com/daydream410/homieshub/refs/heads/main/"
 local ID = game.PlaceId
 
 -- Fungsi untuk memilih skrip berdasarkan ID game
