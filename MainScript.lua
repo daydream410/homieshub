@@ -1,5 +1,3 @@
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
-
 local baseURL = "https://raw.githubusercontent.com/daydream410/homieshub/main/"
 local ID = game.PlaceId
 
