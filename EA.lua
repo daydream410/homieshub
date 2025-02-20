@@ -1,3 +1,5 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
 local Window = Rayfield:CreateWindow({
    Name = "Homies Hub",
    LoadingTitle = "Apa kek udah gede",
