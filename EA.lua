@@ -259,6 +259,103 @@ local FreezeCameraToggle = MainTab:CreateToggle({
     end,
 })
 
+-- highlight Toggle untuk Highlight Semua Player
+local highlightToggle = MainTab:CreateToggle({
+    Name = "Highlight All Player",
+    CurrentValue = false,
+    Flag = "highlightFlag",
+    Callback = function(Value)
+        local players = game:GetService("Players")
+        
+        -- Fungsi untuk menambahkan highlight
+        local function addHighlight(player)
+            if player ~= players.LocalPlayer and player.Character then -- Hindari menyorot diri sendiri
+                -- Periksa apakah player memiliki HumanoidRootPart dan Head
+                local character = player.Character
+                if character and character:FindFirstChild("HumanoidRootPart") and character:FindFirstChild("Head") then
+                    -- Menambahkan highlight jika belum ada
+                    local existingHighlight = character:FindFirstChildOfClass("Highlight")
+                    if not existingHighlight then
+                        local highlight = Instance.new("Highlight")
+                        highlight.Parent = character
+                        highlight.FillColor = Color3.fromRGB(255, 255, 0) -- Warna kuning
+                        highlight.OutlineColor = Color3.fromRGB(255, 255, 255) -- Warna putih
+                        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                        highlight.FillTransparency = 0.5 -- Transparansi isi
+                        highlight.OutlineTransparency = 0 -- Transparansi outline
+                    end
+
+                    -- Menambahkan nama pemain (tanpa pengecekan jarak)
+                    local nameLabel = character:FindFirstChildOfClass("BillboardGui")
+
+                    if not nameLabel then
+                        -- Menambahkan label nama jika belum ada
+                        nameLabel = Instance.new("BillboardGui")
+                        nameLabel.Adornee = character.Head
+                        nameLabel.Size = UDim2.new(0, 100, 0, 30)
+                        nameLabel.StudsOffset = Vector3.new(0, 3, 0)
+                        nameLabel.AlwaysOnTop = true
+
+                        local textLabel = Instance.new("TextLabel")
+                        textLabel.Parent = nameLabel
+                        textLabel.Size = UDim2.new(1, 0, 1, 0)
+                        textLabel.BackgroundTransparency = 1
+                        textLabel.Text = player.Name
+                        textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+                        textLabel.TextStrokeTransparency = 0.5
+                        textLabel.TextSize = 14
+
+                        nameLabel.Parent = character
+                    end
+                end
+            end
+        end
+        
+        -- Fungsi untuk menghapus highlight
+        local function removeHighlight(player)
+            if player.Character then
+                local existingHighlight = player.Character:FindFirstChildOfClass("Highlight")
+                if existingHighlight then
+                    existingHighlight:Destroy()
+                end
+
+                -- Menghapus label nama
+                local nameLabel = player.Character:FindFirstChildOfClass("BillboardGui")
+                if nameLabel then
+                    nameLabel:Destroy()
+                end
+            end
+        end
+        
+        if Value then
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "Homies Hub",
+                Text = "Player Highlight Activated!",
+                Duration = 5
+            })
+            
+            -- Menambahkan highlight ke semua pemain saat ini
+            for _, player in pairs(players:GetPlayers()) do
+                addHighlight(player)
+            end
+            
+            -- Menambahkan highlight untuk pemain yang bergabung setelah toggle diaktifkan
+            players.PlayerAdded:Connect(addHighlight)
+        else
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "Homies Hub",
+                Text = "Player Highlight Deactivated!",
+                Duration = 5
+            })
+            
+            -- Menghapus highlight dari semua pemain saat toggle dimatikan
+            for _, player in pairs(players:GetPlayers()) do
+                removeHighlight(player)
+            end
+        end
+    end,
+})
+
 -- Info Tab untuk fitur lainnya
 local InfoTab = Window:CreateTab("🤔", nil)
 
