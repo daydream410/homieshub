@@ -30,7 +30,7 @@ else
     -- Jika game ID tidak cocok, tampilkan notifikasi atau berhenti
     game.StarterGui:SetCore("SendNotification", {
         Title = "Game Check",
-        Text = "WRONG GAME!",
+        Text = "GAME NOT SUPPORTED!",
         Duration = 5
     })
     return  -- Menyudahi skrip jika game ID tidak cocok
