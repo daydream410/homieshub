@@ -1,4 +1,3 @@
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield', true))()
 
 local Window = Rayfield:CreateWindow({
    Name = "Homies Hub",
